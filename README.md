@@ -10,10 +10,11 @@ just run `py .\hand_tracking\app.py`
 
 ## Current gestures
 
-1. Touch your thumb with your index finger two times to enable the volume controller
-    - Touch your fingers and then separate them.
-    - Repeat 2 times.
-    - You have to be around 30 to 50 cm away of the camera.
+1. Enable Volume Controler
+    - Approach your index finger and your thumb.
+    - Wait 3 seconds.
+    - Adjust volume using the distance between your index finger and your thumb.
+    - Stay 3 seconds in the desired volume.
 
 ## What if not works?
 
@@ -27,9 +28,10 @@ If any of the previous reasons is your case, feel free to add an issue so everyb
 
 ## Ways to improve this
 
-- **Depth detection:** Currently there is no way to detect how far away you are of the camera. This leads to undesired behavior if you are not in the range (around 30 to 50 cm). 
+- **Depth detection:** Currently there is no way to detect how far away you are of the camera. This leads to undesired behavior if you are not in the range (around 30 to 50 cm).
   - *Note:* There is a `utils.py` file with a function that calculates the area of a polygon. That could be useful for a temporary depth detection algortihm that uses the area of the hand or a section of it.
-- **Geture timing:** Right now it works pretty fine, but surely there are better ways to handle gesture timing.
+- **Gesture timing:** Right now it works pretty fine, but surely there are better ways to handle gesture timing.
+- **Gesture detection:** You'll notice that if you flip your hand or put it behind something, the algorithm still tries to detect the position of the fingers, which can lead to unexpected behavior.
 
 ## How to colaborate?
 
