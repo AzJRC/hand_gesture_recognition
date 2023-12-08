@@ -96,7 +96,7 @@ while True:
         x_md = (x1 + x2)//2
         y_md = (y1 + y2)//2
         
-        length = round(math.hypot((x1 - x2),(y1 - y2)), 3)
+        length = round(math.hypot((x1 - x2),(y1 - y2)), 3) #Todo in module
 
 
         # Volume controller
@@ -171,19 +171,3 @@ while True:
 
 cap.release()
 cv.destroyAllWindows()
-
-
-# img = hand_detector.findHands(img)
-#     hand_pos = hand_detector.findHandPosition(img=img, draw_ldmks=[4, 8])
-    
-#     if hand_pos:
-#         if hand_pos[0]:
-#             thumb_pos_x, thumb_pos_y = hand_pos[0][4][2], hand_pos[0][4][3]
-#             finger_pos_x, finger_pos_y = hand_pos[0][8][2], hand_pos[0][8][3]
-
-#             delta_x, delta_y = pow(finger_pos_x - thumb_pos_x, 2), pow(finger_pos_y - thumb_pos_y, 2)
-#             finger_thumb_dist = int(math.sqrt(delta_x + delta_y))
-#             region_size = hand_detector.getHandRegionSize(img, -1, (14, 16, 20, 18))
-#             ratio = round(finger_thumb_dist / (region_size / 100), 3)
-            
-#             cv.line(img, (thumb_pos_x, thumb_pos_y), (finger_pos_x, finger_pos_y), (0, 255, 0), 3)

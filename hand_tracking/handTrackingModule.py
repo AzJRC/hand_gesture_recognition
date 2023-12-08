@@ -48,7 +48,9 @@ class HandDetector():
         return ldmk_list if ldmk_list else []
     
 
-    # Private
+    def distanceBetweenLandmarks():
+        distance = 0
 
-    def __draw_circle(self, img, cx, cy):
-        return cv.circle(img, (cx, cy), 8, (255, 0, 255), cv.FILLED)
+        #Todo
+
+        return distance
