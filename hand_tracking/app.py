@@ -72,6 +72,7 @@ while True:
     fps = 1/(c_time - p_time)
     p_time = c_time 
 
+
     # Gesture detection
     img, results = hand_detector.findHands(img)
     ldmk_list = hand_detector.findPosition(img, ldmks=(4, 8))
