@@ -8,21 +8,15 @@ def main():
     # Dependencies
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
-        print("Cannot open camera")
         exit()
-
 
     # Constants
 
 
-
     # Variables
-    p_time = 0
     hand_controller = HandController(maxHands=2, detectionCon=0.60)
-
     p_time = 0
     c_time = 0
-
 
     # Program starts
     while True:
@@ -30,21 +24,17 @@ def main():
         if not succ:
             print("Can't receive frame (stream end?). Exiting ...")
             break
-
         
         ## Use this to create custom functionality
         # results = hand_controller.findHands(img)
         # ldmk_list = hand_controller.findLandmarksPosition(img)
 
-
         # Show FPS
         c_time = time.time()
         fps = int(1/(c_time - p_time))
 
-
         # Run default app
         hand_controller.runProgram(hand_controller, img)
-
 
         # Update previous time
         p_time = c_time

@@ -1,17 +1,37 @@
 import cv2
 import numpy as np
 
-def getLoadCircle(img, variable: bool, variable_range: list, asc_var: bool, center: tuple, radius: int = 10,
+
+def colorTransition(variable: int, variable_range: list, asc_var: bool, begin_color: tuple = (0, 0, 255), end_color: tuple = (0, 255, 0)):
+    """ 
+        Todo
+    """
+    
+    if not asc_var:
+        begin_color, end_color = end_color, begin_color
+
+    inital_B, end_B = begin_color[0], end_color[0]
+    inital_G, end_G = begin_color[1], end_color[1]
+    inital_R, end_R = begin_color[2], end_color[2]
+
+    B_range = [inital_B, end_B]
+    G_range = [inital_G, end_G] 
+    R_range = [inital_R, end_R]
+
+    curr_B = int(np.interp(variable, variable_range, B_range))
+    curr_G = int(np.interp(variable, variable_range, G_range))
+    curr_R = int(np.interp(variable, variable_range, R_range))
+
+    return (curr_B, curr_G, curr_R)
+
+
+def getLoadCircle(img: np.ndarray, variable: bool, variable_range: list, asc_var: bool, center: tuple, radius: int = 10,
                   begin_color: tuple = (0, 0, 255), end_color: tuple = (0, 255, 0),
                   thickness: int = cv2.FILLED, unload: bool = False, anti_clockwise: bool = False):
     """ 
         # getLoadCircle() Function
 
         It creates a loading animation in a capture video image.
-
-        ## Requirements
-
-        You will need to have cv2 and numpy installed for this function to work.
 
         ## Parameters guidance
 
@@ -28,24 +48,7 @@ def getLoadCircle(img, variable: bool, variable_range: list, asc_var: bool, cent
         - anti_clockwise: True to load/unload the circle in the other direction. By default is set to False.
     """
 
-    if not asc_var:
-        begin_color, end_color = end_color, begin_color
-
-    inital_B, end_B = begin_color[0], end_color[0]
-    inital_G, end_G = begin_color[1], end_color[1]
-    inital_R, end_R = begin_color[2], end_color[2]
-
-    B_range = [inital_B, end_B]
-    G_range = [inital_G, end_G] 
-    R_range = [inital_R, end_R]
-
-    curr_B = int(np.interp(variable, variable_range, B_range))
-    curr_G = int(np.interp(variable, variable_range, G_range))
-    curr_R = int(np.interp(variable, variable_range, R_range))
-
-    curr_color = (curr_B, curr_G, curr_R)
-
-    print(curr_color)
+    curr_color = colorTransition(variable, variable_range, asc_var, begin_color, end_color)
 
     if anti_clockwise:
         loading_angle = 360 - int(np.interp(variable, variable_range, [360, 0]))

@@ -5,6 +5,7 @@ import time
 import cv2
 from typing import Type
 from gestures import hand_gestures
+from features import volume_feature
 from utilities import time_utils
 
 
@@ -15,6 +16,9 @@ class HandController():
         self.maxHands = maxHands
         self.detectionCon = detectionCon
         self.trackCon = trackCon
+
+        # features
+        self.volume_controller_feature = volume_feature.VolumeControllerFeature()
 
         # timer
         self.timer = time_utils.Timer()
@@ -70,19 +74,28 @@ class HandController():
                 - It activates only when your index finger points to the camera.
                 - Cursor control feature.
         """
+        # ldmks
+        thumb_tip_ldmk = hand_ldmks[4]
+        index_tip_ldmk = hand_ldmks[8]
 
-        doIndexThumbTouch = hand_gestures.indexThumbTouch(img, hand_ldmks[4], hand_ldmks[8])
-        if doIndexThumbTouch:
-            # IndexThumbTouch action
 
+        # features
+        if self.volume_controller_feature.active:
+            self.volume_controller_feature.runVolumeController(img, thumb_tip_ldmk, index_tip_ldmk, self.timer, self.c_time, 3)
+        
 
-            doIndexThumbTouching = hand_gestures.indexThumbTouching(img, hand_ldmks[4], hand_ldmks[8], self.timer, self.c_time)
-            if doIndexThumbTouching:
-                # IndexThumbTouching Action
-
-                pass
+        # Gestures
         else:
-            self.timer.resetTimer()
+            doIndexThumbTouch = hand_gestures.indexThumbTouch(img, thumb_tip_ldmk, index_tip_ldmk)
+            if doIndexThumbTouch:
+                # IndexThumbTouch action
+
+                doIndexThumbTouching = hand_gestures.indexThumbTouching(img, thumb_tip_ldmk, index_tip_ldmk, self.timer, self.c_time, 2)
+                if doIndexThumbTouching:
+                    self.volume_controller_feature.active = True # This activates the volume controller feature
+
+            else:
+                self.timer.resetTimer()
     
 
 
