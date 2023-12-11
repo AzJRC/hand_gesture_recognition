@@ -6,13 +6,13 @@ from utilities import time_utils, cv_draw_utils
 
 def indexThumbTouch(img: np.ndarray, thumb_cords: tuple, index_cords: tuple, TOUCH_DIST_THRESHOLD: int = 30, show_gesture: bool = False):
     """
-        # indexThumbTouch() Function
+        # `indexThumbTouch()` Function
 
         This function returns True when your index finger and thumb touches. False otherwise.
 
         ## Parameters guidance
 
-        - img: An img instance from cap.read()
+        - img: An img from `cap.read()`
         - thumb_cords: A 2-value tuple that represents the coordinates of your thumb.
         - index_cords: A 2-value tuple that represents the coordinates of your index.
         - TOUCH_DIST_THRESHOLD: Constant value that represents the accepted distance to consider your index finger and thumb are touching each other.
@@ -33,24 +33,24 @@ def indexThumbTouch(img: np.ndarray, thumb_cords: tuple, index_cords: tuple, TOU
 
 def indexThumbTouching(img: np.ndarray, thumb_cords: tuple, index_cords: tuple, timer: time_utils.Timer, c_time: bool, wait_time: int = 3, show_gesture: bool = True):
     """
-        # indexThumbTouching() Function
+        # `indexThumbTouching()` Function
 
         This function returns True when you are touching (for a set number of seconds) your index finger and thumb together. False otherwise.
 
         ## Parameters guidance
 
-        - img: An img instance from cap.read()
+        - img: An img `from cap.read()`
         - thumb_cords: A 2-value tuple that represents the coordinates of your thumb.
         - index_cords: A 2-value tuple that represents the coordinates of your index.
-        - timer: An instance of time_utils.Timer
-        - c_time: A real value number obtained from time.time() (time module). Required for the time_utils.startTimer() method.
+        - timer: An instance of `time_utils.Timer`
+        - c_time: A real value number obtained from `time.time()` (time module). Required for the `time_utils.startTimer()` method.
         - wait_time: An integer representing the number of seconds to wait until return True. Default value set to 3.
         - show_gesture: A boolean value to activate a load circle. Default value set to True.
     """
 
     remaining_time = timer.startTimer(c_time, wait_time, return_elapsed_time=True)
     if remaining_time == True:
-        timer.resetTimer()
+        timer.stopTimer()
         return True
     
     if show_gesture:

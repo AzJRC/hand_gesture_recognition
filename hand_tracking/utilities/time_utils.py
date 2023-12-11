@@ -20,9 +20,18 @@ class Timer():
             return elapsed_time
         return False
     
+
+    def resetTimer(self, c_time, s):
+        """
+            Reset timer to count again without stoping it.
+        """
+        
+        self.timer = c_time + s
     
-    def resetTimer(self):
+    
+    def stopTimer(self):
         """
             Set timer value to -1 which means timer is inactive
         """
+        
         self.timer = -1

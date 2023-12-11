@@ -51,7 +51,8 @@ If any of the previous reasons is your case, feel free to share the issue so eve
 - **Gesture detection:** You'll notice that if you flip your hand or put it behind something, the algorithm still tries to detect the position of the fingers, which can lead to unexpected behavior.
 - **Refactoring and design:** Right know the code is following a OOP design pattern with functional programming. You'll find out that some files are just standalone functions written to be used in many cases rather than for a specific funcionality, and specific features or "controllers" are defined as python classes. However, there are many functions and classes that aren't yet separated as described previously. Additionally, some function are missing its documentation.
 - **Program config class:** Almost all functionality of this program cannot be changed by the user unless he or she modifies the code, which is not very user friendly. A class for configuration of the whole program could be useful to define specific constant parameters and values, such as default waiting times for the timer and default landmarks colors.
-
+- **Legacy framework:** The mediapipe framework used in this program have been recently deprecated. This is not good in the long term although the functionality is still working. Take a look at the `eg_new_framework` directory, where a face recognition example program was written using the updated solutions.
+ 
 ## How to colaborate?
 
 Feel free to colaborate in this project. Just clone the work and when you finish your changes make a pull request. Thank you very much! I'll appreciate your work.

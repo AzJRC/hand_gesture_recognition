@@ -34,7 +34,7 @@ class VolumeControllerFeature():
         # Timer until controller is deactivated
         remaining_time = timer.startTimer(c_time, wait_time, return_elapsed_time=True)
         if remaining_time == True:
-            timer.resetTimer()
+            timer.stopTimer()
             self.active = False
         
         x1, y1 = thumb_cords[1], thumb_cords[2]

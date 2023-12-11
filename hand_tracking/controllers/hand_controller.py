@@ -20,48 +20,67 @@ class HandController():
         # features
         self.volume_controller_feature = volume_feature.VolumeControllerFeature()
 
-        # timer
-        self.timer = time_utils.Timer()
+        # timers
+        self.hand_gestures_timer = time_utils.Timer()
 
         # changing variables
         self.c_time = 0
         self.p_time = 0
+
+        self.waitUntilOpen = True
+        self.touchCounter = 0
         
         # mp solutions for hand detection
         self.mpHands = mp.solutions.hands
         self.mpDetectedHands = self.mpHands.Hands(self.mode, self.maxHands, 1, self.detectionCon, self.trackCon)
         self.mpDraw = mp.solutions.drawing_utils
 
+        # Run default configuration
+        self.handControllerConfig()
+
+    
+    def handControllerConfig(self, WAIT_TIME: int = 3, NUMBER_OF_HANDS: int = 0, MARK_HANDS_LANDMARKS: bool = True):
+        """
+            Todo
+        """
+
+        self.WAIT_TIME = WAIT_TIME
+        self.NUMBER_OF_HANDS = NUMBER_OF_HANDS
+        self.MARK_HANDS_LANDMARKS = MARK_HANDS_LANDMARKS
+
 
     def runProgram(self, hand_controller: Type[HandController], img: np.ndarray):
         """
-        # Todo
+        # `runProgram()` Method
+
+        Call this method to run the program.
+
+        ## Parameters guidance
+
+        - hand_controller: An instance of this class.
+        - img: An img from `cap.read()`
 
         """
 
-        results = hand_controller.findHands(img)
+        results = hand_controller.__findHands(img, self.MARK_HANDS_LANDMARKS)
         if not results:
             return
 
         #Current time
         self.c_time = time.time()
 
-
         # Detect gestures
-        detected_ldmks = hand_controller.findLandmarksPosition(img)
+        detected_ldmks = hand_controller.__findLandmarksPosition(img, self.NUMBER_OF_HANDS)
         if detected_ldmks:
-            hand_controller.handGestures(img, detected_ldmks)
-
+            hand_controller.__handGesturesDetection(img, detected_ldmks)
 
         #Previous time
         self.p_time = self.c_time
-
-
     
 
-    def handGestures(self, img: np.ndarray, hand_ldmks: list):
+    def __handGesturesDetection(self, img: np.ndarray, hand_ldmks: list):
         """ 
-            # handGestures() Method
+            # `__handGesturesDetection()` Method
 
             This method will handle the following gesture operations:
             - IndexThumbTouch
@@ -74,36 +93,60 @@ class HandController():
                 - It activates only when your index finger points to the camera.
                 - Cursor control feature.
         """
+
         # ldmks
         thumb_tip_ldmk = hand_ldmks[4]
         index_tip_ldmk = hand_ldmks[8]
 
-
         # features
         if self.volume_controller_feature.active:
-            self.volume_controller_feature.runVolumeController(img, thumb_tip_ldmk, index_tip_ldmk, self.timer, self.c_time, 3)
+            self.volume_controller_feature.runVolumeController(img, thumb_tip_ldmk, index_tip_ldmk, self.hand_gestures_timer, self.c_time, self.WAIT_TIME)
         
 
         # Gestures
         else:
+
+            # IndexThumb Gestures
+            if self.touchCounter > 3:
+                self.touchCounter = 0
+
             doIndexThumbTouch = hand_gestures.indexThumbTouch(img, thumb_tip_ldmk, index_tip_ldmk)
             if doIndexThumbTouch:
-                # IndexThumbTouch action
 
-                doIndexThumbTouching = hand_gestures.indexThumbTouching(img, thumb_tip_ldmk, index_tip_ldmk, self.timer, self.c_time, 2)
-                if doIndexThumbTouching:
-                    self.volume_controller_feature.active = True # This activates the volume controller feature
+                if self.waitUntilOpen:
+                    self.waitUntilOpen = False
+                    self.touchCounter += 1
+
+                if self.touchCounter == 1:
+                    doIndexThumbTouching = hand_gestures.indexThumbTouching(img, thumb_tip_ldmk, index_tip_ldmk, self.hand_gestures_timer, self.c_time, self.WAIT_TIME)
+                    if doIndexThumbTouching:
+                        self.volume_controller_feature.active = True
 
             else:
-                self.timer.resetTimer()
+                self.hand_gestures_timer.stopTimer()
+                self.waitUntilOpen = True
+
+            #Index pointing gesture
+            pass
+
+
+        # CV2 draws
+        cv2.putText(img, f"{str(self.touchCounter)}", (600, 40), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 2)
+                
     
 
 
     
-    def findHands(self, img, draw_image: bool = True):
+    def __findHands(self, img, draw_image: bool = True):
         """
-            - img: An img instance from cap.read()
-            - draw_image: Wheter you want to mark the landmarks detected by mediapipe.
+            #` __findHands()` Method
+
+            Use this method to detect your hands using mediapipe.
+
+            ## Parameters guidance
+
+            - img: An img from `cap.read()`
+            - draw_image: True if you want to mark the landmarks detected by mediapipe. Default value is set to True
         """
 
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -115,12 +158,20 @@ class HandController():
         return self.results
 
 
-    def findLandmarksPosition(self, img, handNo: int = 0, mark_ldmks: list | None = [], mark_params: dict = {}):
+    def __findLandmarksPosition(self, img, handNo: int = 0, mark_ldmks: list | None = [], mark_params: dict = {}):
         """ 
-            - img: An img instance from cap.read()
-            - HandNo: Hand you want to get its landmarks position
-            - mark_landmks: Pass the landmarks ids in a list to mark it (with a circle). 
-            - mark_params: Parameters of cv2.circle(). Only if you provided landmarks to mark. Keywords: (radius, color, thickness)
+            # `__findLandmarksPosition()` Method
+
+            Use this method to obtain the coordinates of hand landmarks in a list. You can access a specific landmark by its ID, 
+            as defined in the official [MediaPipe Hand Landmarks documentation](https://developers.google.com/mediapipe/solutions/vision/hand_landmarker "Hand landmarks detection guide").
+
+            ## Parameters Guidance
+
+            - img: An instance of the image obtained from `cap.read()`.
+            - HandNo: Specify the hand for which you want to retrieve landmark positions.
+            - mark_landmks: Provide a list of landmark IDs to mark them with circles on the image.
+            - mark_params: Parameters for the `cv2.circle()` function. Only necessary if you provided landmark IDs to mark. 
+                Keywords: `(radius, color, thickness)`.
         """
 
         if self.results.multi_hand_landmarks:
@@ -141,6 +192,10 @@ class HandController():
             return ldmks      
 
 
+##############################
+##############################
+
+
 def main():
     hand_controller = HandController()
     cap = cv2.VideoCapture(0)
@@ -150,8 +205,11 @@ def main():
         if not succ:
             break
 
-        img, results = hand_controller.findHands(img)
-        ldmks = hand_controller.findLandmarksPosition(img, mark_ldmks=[4, 8], mark_params={"color": (0, 0, 255)})
+        img, results = hand_controller.__findHands(img)
+        if not results:
+            continue
+
+        ldmks = hand_controller.__findLandmarksPosition(img, mark_ldmks=[4, 8], mark_params={"color": (0, 0, 255)})
 
         cv2.imshow('Image', img)
         if cv2.waitKey(1) == ord('q'):
